@@ -245,7 +245,7 @@ namespace Opc.Ua.Bindings
                     return;
                 }
 
-                int length = (int) context.Request.ContentLength;
+                int length = (int)context.Request.ContentLength;
                 byte[] buffer = await ReadBodyAsync(context.Request);
 
                 if (buffer.Length != length)
@@ -358,7 +358,7 @@ namespace Opc.Ua.Bindings
         private IWebHostBuilder m_hostBuilder;
         private IWebHost m_host;
         private X509Certificate2 m_serverCert;
-#endregion
+        #endregion
     }
 }
 

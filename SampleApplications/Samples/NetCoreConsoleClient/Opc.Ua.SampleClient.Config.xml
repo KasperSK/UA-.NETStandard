@@ -12,12 +12,18 @@
   <SecurityConfiguration>
 
     <!-- Where the application instance certificate is stored (MachineDefault) -->
-    <ApplicationCertificate>
+    <!--<ApplicationCertificate>
       <StoreType>X509Store</StoreType>
       <StorePath>CurrentUser\My</StorePath>
       <SubjectName>CN=UA Core Sample Client, C=US, S=Arizona, O=OPC Foundation, DC=localhost</SubjectName>
-    </ApplicationCertificate>
+    </ApplicationCertificate>-->
 
+    <ApplicationCertificate>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%/OPC Foundation/CertificateStores/MachineDefault</StorePath>
+      <SubjectName>f184e67bd530065e4e2b6b078bb440ed3bb7360c.der</SubjectName>
+    </ApplicationCertificate>
+    
     <!-- Where the issuer certificate are stored (certificate authorities) -->
     <TrustedIssuerCertificates>
       <StoreType>Directory</StoreType>
@@ -38,8 +44,9 @@
 
     <!-- WARNING: The following setting (to automatically accept untrusted certificates) should be used
     for easy debugging purposes ONLY and turned off for production deployments! -->
-    <AutoAcceptUntrustedCertificates>false</AutoAcceptUntrustedCertificates>
-
+    <AutoAcceptUntrustedCertificates>true</AutoAcceptUntrustedCertificates>
+    <RejectSHA1SignedCertificates>false</RejectSHA1SignedCertificates>
+    <MinimumCertificateKeySize>1024</MinimumCertificateKeySize>
   </SecurityConfiguration>
 
   <TransportConfigurations/>

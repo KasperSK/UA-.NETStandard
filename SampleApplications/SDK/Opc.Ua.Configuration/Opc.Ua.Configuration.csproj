@@ -7,6 +7,10 @@
     <PackageId>Opc.Ua.Configuration</PackageId>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
+    <DocumentationFile>C:\Users\ksk\Documents\GitHub\UA-.NETStandard\SampleApplications\SDK\Opc.Ua.Configuration\Opc.Ua.Configuration.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\..\Stack\Opc.Ua.Core\Opc.Ua.Core.csproj" />
   </ItemGroup>

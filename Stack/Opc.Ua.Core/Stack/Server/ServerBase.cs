@@ -30,7 +30,7 @@ namespace Opc.Ua
         /// Initializes object with default values.
         /// </summary>
         public ServerBase()
-        {            
+        {
             m_messageContext = new ServiceMessageContext();
             m_serverError = new ServiceResult(StatusCodes.BadServerHalted);
             m_hosts = new List<Task>();
@@ -39,13 +39,13 @@ namespace Opc.Ua
             m_requestQueue = new RequestQueue(this, 10, 100, 1000);
         }
         #endregion
-        
+
         #region IDisposable Members
         /// <summary>
         /// Frees any unmanaged resources.
         /// </summary>
         public void Dispose()
-        {   
+        {
             Dispose(true);
         }
 
@@ -53,7 +53,7 @@ namespace Opc.Ua
         /// An overrideable version of the Dispose.
         /// </summary>
         protected virtual void Dispose(bool disposing)
-        {  
+        {
             if (disposing)
             {
                 // dispose any listeners.
@@ -90,14 +90,14 @@ namespace Opc.Ua
         /// <value>The message context that stores context information associated with a UA 
         /// server that is used during message processing.
         /// </value>
-        public ServiceMessageContext MessageContext 
-        { 
-            get 
-            { 
-                return (ServiceMessageContext)m_messageContext; 
+        public ServiceMessageContext MessageContext
+        {
+            get
+            {
+                return (ServiceMessageContext)m_messageContext;
             }
-            
-            set 
+
+            set
             {
                 Interlocked.Exchange(ref m_messageContext, value);
             }
@@ -108,13 +108,13 @@ namespace Opc.Ua
         /// </summary>
         /// <value>The object that combines the status code and diagnostic info structures.</value>
         public ServiceResult ServerError
-        { 
-            get 
-            { 
-                return (ServiceResult)m_serverError; 
+        {
+            get
+            {
+                return (ServiceResult)m_serverError;
             }
-            
-            set 
+
+            set
             {
                 Interlocked.Exchange(ref m_serverError, value);
             }
@@ -306,18 +306,18 @@ namespace Opc.Ua
                 switch (address.Url.Scheme)
                 {
                     case Utils.UriSchemeHttps:
-                    {
-                        address.ProfileUri = Profiles.HttpsBinaryTransport;
-                        address.DiscoveryUrl = address.Url;
-                        break;
-                    }
+                        {
+                            address.ProfileUri = Profiles.HttpsBinaryTransport;
+                            address.DiscoveryUrl = address.Url;
+                            break;
+                        }
 
                     case Utils.UriSchemeOpcTcp:
-                    {
-                        address.ProfileUri = Profiles.UaTcpTransport;
-                        address.DiscoveryUrl = address.Url;
-                        break;
-                    }
+                        {
+                            address.ProfileUri = Profiles.UaTcpTransport;
+                            address.DiscoveryUrl = address.Url;
+                            break;
+                        }
                 }
 
                 BaseAddresses.Add(address);
@@ -362,7 +362,7 @@ namespace Opc.Ua
             }
 
             return discoveryUrls;
-        }              
+        }
 
         /// <summary>
         /// Initializes the request queue.
@@ -399,7 +399,7 @@ namespace Opc.Ua
             {
                 maxQueuedRequestCount = 100;
             }
-            
+
             if (m_requestQueue != null)
             {
                 m_requestQueue.Dispose();
@@ -517,12 +517,12 @@ namespace Opc.Ua
         /// <value>The instance X.509 certificate.</value>
         protected X509Certificate2 InstanceCertificate
         {
-            get 
-            { 
-                return (X509Certificate2)m_instanceCertificate; 
+            get
+            {
+                return (X509Certificate2)m_instanceCertificate;
             }
-            
-            private set 
+
+            private set
             {
                 m_instanceCertificate = value;
             }
@@ -550,12 +550,12 @@ namespace Opc.Ua
         /// <value>The properties of the current server instance.</value>
         protected ServerProperties ServerProperties
         {
-            get 
-            { 
-                return (ServerProperties)m_serverProperties; 
+            get
+            {
+                return (ServerProperties)m_serverProperties;
             }
-            
-            private set 
+
+            private set
             {
                 m_serverProperties = value;
             }
@@ -567,12 +567,12 @@ namespace Opc.Ua
         /// <value>Object that stores the configurable configuration information for a UA application</value>
         protected ApplicationConfiguration Configuration
         {
-            get 
-            { 
-                return (ApplicationConfiguration)m_configuration; 
+            get
+            {
+                return (ApplicationConfiguration)m_configuration;
             }
-            
-            private set 
+
+            private set
             {
                 m_configuration = value;
             }
@@ -584,12 +584,12 @@ namespace Opc.Ua
         /// <value>Object that contains a description for the ApplicationDescription DataType.</value>
         protected ApplicationDescription ServerDescription
         {
-            get 
-            { 
-                return (ApplicationDescription)m_serverDescription; 
+            get
+            {
+                return (ApplicationDescription)m_serverDescription;
             }
-            
-            private set 
+
+            private set
             {
                 m_serverDescription = value;
             }
@@ -665,14 +665,14 @@ namespace Opc.Ua
                     tcpListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
                     continue;
                 }
-#if !NO_HTTPS
-                UaHttpsChannelListener httpsListener = listener as UaHttpsChannelListener;
-                if (httpsListener != null)
-                {
-                    httpsListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
-                    continue;
-                }
-#endif
+//#if !NO_HTTPS
+//                UaHttpsChannelListener httpsListener = listener as UaHttpsChannelListener;
+//                if (httpsListener != null)
+//                {
+//                    httpsListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
+//                    continue;
+//                }
+//#endif
             }
         }
 
@@ -735,7 +735,7 @@ namespace Opc.Ua
                     description.SecurityMode = policy.SecurityMode;
                     description.SecurityPolicyUri = policy.SecurityPolicyUri;
                     description.SecurityLevel = ServerSecurityPolicy.CalculateSecurityLevel(policy.SecurityMode, policy.SecurityPolicyUri);
-                    description.UserIdentityTokens = GetUserTokenPolicies( configuration, description );
+                    description.UserIdentityTokens = GetUserTokenPolicies(configuration, description);
                     description.TransportProfileUri = Profiles.UaTcpTransport;
 
                     bool requireEncryption = RequireEncryption(description);
@@ -757,7 +757,7 @@ namespace Opc.Ua
                         description.ServerCertificate = InstanceCertificate.RawData;
 
                         // check if complete chain should be sent.
-                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count >0)
+                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count > 0)
                         {
                             List<byte> serverCertificateChain = new List<byte>();
 
@@ -770,7 +770,7 @@ namespace Opc.Ua
                         }
                     }
 
-                    endpoints.Add( description );
+                    endpoints.Add(description);
                 }
 
                 // create the UA-TCP stack listener.
@@ -809,147 +809,147 @@ namespace Opc.Ua
             return endpoints;
         }
 
-#if !NO_HTTPS
-        /// <summary>
-        /// Create a new service host for UA HTTPS.
-        /// </summary>
-        protected List<EndpointDescription> CreateHttpsServiceHost(
-            IDictionary<string, Task> hosts,
-            ApplicationConfiguration configuration,
-            IList<string> baseAddresses,
-            ApplicationDescription serverDescription,
-            List<ServerSecurityPolicy> securityPolicies)
-        {
-            // generate a unique host name.
-            string hostName = String.Empty;
+//#if !NO_HTTPS
+//        /// <summary>
+//        /// Create a new service host for UA HTTPS.
+//        /// </summary>
+//        protected List<EndpointDescription> CreateHttpsServiceHost(
+//            IDictionary<string, Task> hosts,
+//            ApplicationConfiguration configuration,
+//            IList<string> baseAddresses,
+//            ApplicationDescription serverDescription,
+//            List<ServerSecurityPolicy> securityPolicies)
+//        {
+//            // generate a unique host name.
+//            string hostName = String.Empty;
 
-            if (hosts.ContainsKey(hostName))
-            {
-                hostName = "/Https";
-            }
+//            if (hosts.ContainsKey(hostName))
+//            {
+//                hostName = "/Https";
+//            }
 
-            if (hosts.ContainsKey(hostName))
-            {
-                hostName += Utils.Format("/{0}", hosts.Count);
-            }
+//            if (hosts.ContainsKey(hostName))
+//            {
+//                hostName += Utils.Format("/{0}", hosts.Count);
+//            }
 
-            // build list of uris.
-            List<Uri> uris = new List<Uri>();
-            EndpointDescriptionCollection endpoints = new EndpointDescriptionCollection();
+//            // build list of uris.
+//            List<Uri> uris = new List<Uri>();
+//            EndpointDescriptionCollection endpoints = new EndpointDescriptionCollection();
 
-            // create the endpoint configuration to use.
-            EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(configuration);
-            string computerName = Utils.GetHostName();
+//            // create the endpoint configuration to use.
+//            EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(configuration);
+//            string computerName = Utils.GetHostName();
 
-            for (int ii = 0; ii < baseAddresses.Count; ii++)
-            {
-                if (!baseAddresses[ii].StartsWith(Utils.UriSchemeHttps, StringComparison.Ordinal))
-                {
-                    continue;
-                }
+//            for (int ii = 0; ii < baseAddresses.Count; ii++)
+//            {
+//                if (!baseAddresses[ii].StartsWith(Utils.UriSchemeHttps, StringComparison.Ordinal))
+//                {
+//                    continue;
+//                }
 
-                UriBuilder uri = new UriBuilder(baseAddresses[ii]);
+//                UriBuilder uri = new UriBuilder(baseAddresses[ii]);
 
-                if (uri.Path[uri.Path.Length-1] != '/')
-                {
-                    uri.Path += "/";
-                }
+//                if (uri.Path[uri.Path.Length - 1] != '/')
+//                {
+//                    uri.Path += "/";
+//                }
 
-                if (String.Compare(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase) == 0)
-                {
-                    uri.Host = computerName;
-                }
+//                if (String.Compare(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase) == 0)
+//                {
+//                    uri.Host = computerName;
+//                }
 
-                uris.Add(uri.Uri);
+//                uris.Add(uri.Uri);
 
-                if (uri.Scheme == Utils.UriSchemeHttps)
-                {
-                    // Can only support one policy with HTTPS so pick the 
-                    // first secure policy with sign and encrypt in the list 
-                    ServerSecurityPolicy bestPolicy = null;
-                    foreach (ServerSecurityPolicy policy in securityPolicies)
-                    {
-                        if (policy.SecurityMode != MessageSecurityMode.SignAndEncrypt)
-                        {
-                            continue;
-                        }
+//                if (uri.Scheme == Utils.UriSchemeHttps)
+//                {
+//                    // Can only support one policy with HTTPS so pick the 
+//                    // first secure policy with sign and encrypt in the list 
+//                    ServerSecurityPolicy bestPolicy = null;
+//                    foreach (ServerSecurityPolicy policy in securityPolicies)
+//                    {
+//                        if (policy.SecurityMode != MessageSecurityMode.SignAndEncrypt)
+//                        {
+//                            continue;
+//                        }
 
-                        bestPolicy = policy;
-                        break;
-                    }
+//                        bestPolicy = policy;
+//                        break;
+//                    }
 
-                    if (bestPolicy == null)
-                    {
-                        throw new ServiceResultException("HTTPS transport requires policy with sign and encrypt.");
-                    }
+//                    if (bestPolicy == null)
+//                    {
+//                        throw new ServiceResultException("HTTPS transport requires policy with sign and encrypt.");
+//                    }
 
-                    EndpointDescription description = new EndpointDescription();
+//                    EndpointDescription description = new EndpointDescription();
 
-                    description.EndpointUrl = uri.ToString();
-                    description.Server = serverDescription;
+//                    description.EndpointUrl = uri.ToString();
+//                    description.Server = serverDescription;
 
-                    if (InstanceCertificate != null)
-                    {
-                        description.ServerCertificate = InstanceCertificate.RawData;
+//                    if (InstanceCertificate != null)
+//                    {
+//                        description.ServerCertificate = InstanceCertificate.RawData;
 
-                        // check if complete chain should be sent.
-                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count > 0)
-                        {
-                            List<byte> serverCertificateChain = new List<byte>();
+//                        // check if complete chain should be sent.
+//                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count > 0)
+//                        {
+//                            List<byte> serverCertificateChain = new List<byte>();
 
-                            for (int i = 0; i < InstanceCertificateChain.Count; i++)
-                            {
-                                serverCertificateChain.AddRange(InstanceCertificateChain[i].RawData);
-                            }
+//                            for (int i = 0; i < InstanceCertificateChain.Count; i++)
+//                            {
+//                                serverCertificateChain.AddRange(InstanceCertificateChain[i].RawData);
+//                            }
 
-                            description.ServerCertificate = serverCertificateChain.ToArray();
-                        }
-                    }
+//                            description.ServerCertificate = serverCertificateChain.ToArray();
+//                        }
+//                    }
 
-                    description.SecurityMode = bestPolicy.SecurityMode;
-                    description.SecurityPolicyUri = bestPolicy.SecurityPolicyUri;
-                    description.SecurityLevel = ServerSecurityPolicy.CalculateSecurityLevel(bestPolicy.SecurityMode, bestPolicy.SecurityPolicyUri);
-                    description.UserIdentityTokens = GetUserTokenPolicies(configuration, description);
-                    description.TransportProfileUri = Profiles.HttpsBinaryTransport;
+//                    description.SecurityMode = bestPolicy.SecurityMode;
+//                    description.SecurityPolicyUri = bestPolicy.SecurityPolicyUri;
+//                    description.SecurityLevel = ServerSecurityPolicy.CalculateSecurityLevel(bestPolicy.SecurityMode, bestPolicy.SecurityPolicyUri);
+//                    description.UserIdentityTokens = GetUserTokenPolicies(configuration, description);
+//                    description.TransportProfileUri = Profiles.HttpsBinaryTransport;
 
-                    endpoints.Add(description);
-                }
+//                    endpoints.Add(description);
+//                }
 
-                // create the stack listener.
-                try
-                {
-                    TransportListenerSettings settings = new TransportListenerSettings();
+//                // create the stack listener.
+//                try
+//                {
+//                    TransportListenerSettings settings = new TransportListenerSettings();
 
-                    settings.Descriptions = endpoints;
-                    settings.Configuration = endpointConfiguration;
-                    settings.ServerCertificate = this.InstanceCertificate;
-                    settings.CertificateValidator = configuration.CertificateValidator.GetChannelValidator();
-                    settings.NamespaceUris = this.MessageContext.NamespaceUris;
-                    settings.Factory = this.MessageContext.Factory;
+//                    settings.Descriptions = endpoints;
+//                    settings.Configuration = endpointConfiguration;
+//                    settings.ServerCertificate = this.InstanceCertificate;
+//                    settings.CertificateValidator = configuration.CertificateValidator.GetChannelValidator();
+//                    settings.NamespaceUris = this.MessageContext.NamespaceUris;
+//                    settings.Factory = this.MessageContext.Factory;
 
-                    ITransportListener listener = new Opc.Ua.Bindings.UaHttpsChannelListener();
+//                    ITransportListener listener = new Opc.Ua.Bindings.UaHttpsChannelListener();
 
-                    listener.Open(
-                       uri.Uri,
-                       settings,
-                       GetEndpointInstance(this));
+//                    listener.Open(
+//                       uri.Uri,
+//                       settings,
+//                       GetEndpointInstance(this));
 
-                    TransportListeners.Add(listener);
-                }
-                catch (Exception e)
-                {
-                    string message = "Could not load HTTPS Stack Listener.";
-                    if (e.InnerException != null)
-                    {
-                        message += (" " + e.InnerException.Message);
-                    }
-                    Utils.Trace(e, message);
-                }
-            }
+//                    TransportListeners.Add(listener);
+//                }
+//                catch (Exception e)
+//                {
+//                    string message = "Could not load HTTPS Stack Listener.";
+//                    if (e.InnerException != null)
+//                    {
+//                        message += (" " + e.InnerException.Message);
+//                    }
+//                    Utils.Trace(e, message);
+//                }
+//            }
 
-            return endpoints;
-        }
-#endif
+//            return endpoints;
+//        }
+//#endif
 
         /// <summary>
         /// Returns the UserTokenPolicies supported by the server.
@@ -1203,7 +1203,7 @@ namespace Opc.Ua
                     {
                         translateHttpsEndpoint = true;
                     }
-                    
+
                     if (endpoint.TransportProfileUri != baseAddress.ProfileUri && !translateHttpsEndpoint)
                     {
                         continue;
@@ -1213,7 +1213,7 @@ namespace Opc.Ua
                     {
                         continue;
                     }
-                            
+
                     EndpointDescription translation = new EndpointDescription();
 
                     translation.EndpointUrl = baseAddress.Url.ToString();
@@ -1268,7 +1268,7 @@ namespace Opc.Ua
 
             ResponseHeader responseHeader = new ResponseHeader();
 
-            responseHeader.Timestamp     = DateTime.UtcNow;
+            responseHeader.Timestamp = DateTime.UtcNow;
             responseHeader.RequestHandle = requestHeader.RequestHandle;
 
             return responseHeader;
@@ -1284,13 +1284,13 @@ namespace Opc.Ua
         {
             ResponseHeader responseHeader = new ResponseHeader();
 
-            responseHeader.Timestamp     = DateTime.UtcNow;
+            responseHeader.Timestamp = DateTime.UtcNow;
             responseHeader.RequestHandle = requestHeader.RequestHandle;
-                        
+
             StringTable stringTable = new StringTable();
             responseHeader.ServiceDiagnostics = new DiagnosticInfo(exception, (DiagnosticsMasks)requestHeader.ReturnDiagnostics, true, stringTable);
             responseHeader.StringTable = stringTable.ToArray();
-            
+
             return responseHeader;
         }
 
@@ -1304,11 +1304,11 @@ namespace Opc.Ua
         {
             ResponseHeader responseHeader = new ResponseHeader();
 
-            responseHeader.Timestamp     = DateTime.UtcNow;
+            responseHeader.Timestamp = DateTime.UtcNow;
             responseHeader.RequestHandle = requestHeader.RequestHandle;
 
             responseHeader.StringTable.AddRange(stringTable.ToArray());
-               
+
             return responseHeader;
         }
 
@@ -1423,9 +1423,9 @@ namespace Opc.Ua
         /// <param name="endpoints">The collection of <see cref="EndpointDescription"/> objects.</param>
         /// <returns>Returns list of hosts for a UA service.</returns>
         protected virtual IList<Task> InitializeServiceHosts(
-            ApplicationConfiguration          configuration, 
-            out ApplicationDescription        serverDescription,
-            out EndpointDescriptionCollection endpoints)            
+            ApplicationConfiguration configuration,
+            out ApplicationDescription serverDescription,
+            out EndpointDescriptionCollection endpoints)
         {
             serverDescription = null;
             endpoints = null;
@@ -1467,15 +1467,15 @@ namespace Opc.Ua
         {
             request.CallSynchronously();
         }
-#endregion
+        #endregion
 
-#region RequestQueue Class
+        #region RequestQueue Class
         /// <summary>
         /// Manages a queue of requests.
         /// </summary>
         protected class RequestQueue : IDisposable
         {
-#region Constructors
+            #region Constructors
             /// <summary>
             /// Initializes a new instance of the <see cref="RequestQueue"/> class.
             /// </summary>
@@ -1488,9 +1488,9 @@ namespace Opc.Ua
                 m_server = server;
                 m_stopped = false;
             }
-#endregion
+            #endregion
 
-#region IDisposable Members
+            #region IDisposable Members
             /// <summary>
             /// Frees any unmanaged resources.
             /// </summary>
@@ -1509,9 +1509,9 @@ namespace Opc.Ua
                     m_stopped = true;
                 }
             }
-#endregion
+            #endregion
 
-#region Public Members
+            #region Public Members
             /// <summary>
             /// Schedules an incoming request.
             /// </summary>
@@ -1530,18 +1530,18 @@ namespace Opc.Ua
                     });
                 }
             }
-#endregion
+            #endregion
 
-#region Private Fields
+            #region Private Fields
             private ServerBase m_server;
             private bool m_stopped;
-#endregion
+            #endregion
 
         }
 
-#endregion
+        #endregion
 
-#region Private Fields
+        #region Private Fields
         private object m_messageContext;
         private object m_serverError;
         private object m_certificateValidator;
@@ -1554,6 +1554,6 @@ namespace Opc.Ua
         private List<ITransportListener> m_listeners;
         private ReadOnlyList<EndpointDescription> m_endpoints;
         private RequestQueue m_requestQueue;
-#endregion
+        #endregion
     }
 }

@@ -93,7 +93,11 @@ namespace NetCoreConsoleClient
             if (extraArgs.Count == 0)
             {
                 // use OPC UA .Net Sample server 
-                endpointURL = "opc.tcp://localhost:51210/UA/SampleServer";
+                //endpointURL = "opc.tcp://DK-KSK-HP850.kamstrup.dk:49321";
+                //endpointURL = "opc.tcp://us-atl-sal1kep.kamstrup.dk:49320";
+                endpointURL = "opc.tcp://172.20.17.69";
+                //endpointURL = "opc.tcp://DK-KSK-HP800SFF.kamstrup.dk:49321";
+
             }
             else
             {
@@ -101,6 +105,7 @@ namespace NetCoreConsoleClient
             }
 
             MySampleClient client = new MySampleClient(endpointURL, autoAccept, stopTimeout);
+            client.NamespaceIndex = 2;
             client.Run();
 
             return (int)MySampleClient.ExitCode;
@@ -116,6 +121,7 @@ namespace NetCoreConsoleClient
         int clientRunTime = Timeout.Infinite;
         static bool autoAccept = false;
         static ExitCode exitCode;
+        public ushort NamespaceIndex { get; set; } = 2;
 
         public MySampleClient(string _endpointURL, bool _autoAccept, int _stopTimeout)
         {
@@ -182,19 +188,21 @@ namespace NetCoreConsoleClient
 
             // check the application certificate.
             bool haveAppCertificate = await application.CheckApplicationInstanceCertificate(false, 0);
-            if (!haveAppCertificate)
-            {
-                throw new Exception("Application instance certificate invalid!");
-            }
+            //if (!haveAppCertificate)
+            //{
+            //    throw new Exception("Application instance certificate invalid!");
+            //}
 
             if (haveAppCertificate)
             {
                 config.ApplicationUri = Utils.GetApplicationUriFromCertificate(config.SecurityConfiguration.ApplicationCertificate.Certificate);
+                config.SecurityConfiguration.Validate();
                 if (config.SecurityConfiguration.AutoAcceptUntrustedCertificates)
                 {
                     autoAccept = true;
                 }
                 config.CertificateValidator.CertificateValidation += new CertificateValidationEventHandler(CertificateValidator_CertificateValidation);
+
             }
             else
             {
@@ -203,7 +211,7 @@ namespace NetCoreConsoleClient
 
             Console.WriteLine("2 - Discover endpoints of {0}.", endpointURL);
             exitCode = ExitCode.ErrorDiscoverEndpoints;
-            var selectedEndpoint = CoreClientUtils.SelectEndpoint(endpointURL, haveAppCertificate, 15000);
+            var selectedEndpoint = CoreClientUtils.SelectEndpoint(endpointURL, false);
             Console.WriteLine("    Selected endpoint uses: {0}",
                 selectedEndpoint.SecurityPolicyUri.Substring(selectedEndpoint.SecurityPolicyUri.LastIndexOf('#') + 1));
 
@@ -211,65 +219,36 @@ namespace NetCoreConsoleClient
             exitCode = ExitCode.ErrorCreateSession;
             var endpointConfiguration = EndpointConfiguration.Create(config);
             var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
-            session = await Session.Create(config, endpoint, false, "OPC UA Console Client", 60000, new UserIdentity(new AnonymousIdentityToken()), null);
-
+            try
+            {
+                session = await Session.Create(config, endpoint, false, "OPC UA Console Client", 60000, /*new UserIdentity()*/new UserIdentity("KSK1", "12345678"), null);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
             // register keep alive handler
             session.KeepAlive += Client_KeepAlive;
 
             Console.WriteLine("4 - Browse the OPC UA server namespace.");
             exitCode = ExitCode.ErrorBrowseNamespace;
-            ReferenceDescriptionCollection references;
-            Byte[] continuationPoint;
-
-            references = session.FetchReferences(ObjectIds.ObjectsFolder);
-
-            session.Browse(
-                null,
-                null,
-                ObjectIds.ObjectsFolder,
-                0u,
-                BrowseDirection.Forward,
-                ReferenceTypeIds.HierarchicalReferences,
-                true,
-                (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method,
-                out continuationPoint,
-                out references);
-
-            Console.WriteLine(" DisplayName, BrowseName, NodeClass");
-            foreach (var rd in references)
-            {
-                Console.WriteLine(" {0}, {1}, {2}", rd.DisplayName, rd.BrowseName, rd.NodeClass);
-                ReferenceDescriptionCollection nextRefs;
-                byte[] nextCp;
-                session.Browse(
-                    null,
-                    null,
-                    ExpandedNodeId.ToNodeId(rd.NodeId, session.NamespaceUris),
-                    0u,
-                    BrowseDirection.Forward,
-                    ReferenceTypeIds.HierarchicalReferences,
-                    true,
-                    (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method,
-                    out nextCp,
-                    out nextRefs);
-
-                foreach (var nextRd in nextRefs)
-                {
-                    Console.WriteLine("   + {0}, {1}, {2}", nextRd.DisplayName, nextRd.BrowseName, nextRd.NodeClass);
-                }
-            }
+            PrintReferences(new ReferenceDescription { NodeId = new NodeId(ObjectIds.ObjectsFolder) }, "");
 
             Console.WriteLine("5 - Create a subscription with publishing interval of 1 second.");
             exitCode = ExitCode.ErrorCreateSubscription;
-            var subscription = new Subscription(session.DefaultSubscription) { PublishingInterval = 1000 };
+            var subscription = new Subscription(session.DefaultSubscription) { PublishingInterval = 250 };
 
             Console.WriteLine("6 - Add a list of items (server current time and status) to the subscription.");
             exitCode = ExitCode.ErrorMonitoredItem;
             var list = new List<MonitoredItem> {
-                new MonitoredItem(subscription.DefaultItem)
-                {
-                    DisplayName = "ServerStatusCurrentTime", StartNodeId = "i="+Variables.Server_ServerStatus_CurrentTime.ToString()
-                }
+                //new MonitoredItem(subscription.DefaultItem)
+                //{
+                //    DisplayName = "ServerStatusCurrentTime", StartNodeId = "i="+Variables.Server_ServerStatus_CurrentTime.ToString()
+                //},
+                //new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATER.KKU.GENERAL.PLC.WATCHDOG", StartNodeId = new NodeId("Water.KKU.General.PLC.WatchDog", NamespaceIndex) },
+                //new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATER.KKU.GENERAL.PC.WATCHDOG", StartNodeId = new NodeId("Water.KKU.General.PC.WatchDog", NamespaceIndex),  MonitoringMode = MonitoringMode.Sampling },
+
+                new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATCHDOG", StartNodeId = new NodeId("WATCHDOG", 4) },
             };
             list.ForEach(i => i.Notification += OnNotification);
             subscription.AddItems(list);
@@ -281,6 +260,49 @@ namespace NetCoreConsoleClient
 
             Console.WriteLine("8 - Running...Press Ctrl-C to exit...");
             exitCode = ExitCode.ErrorRunning;
+
+            Console.WriteLine("9 - Press enter to write");
+            Console.ReadLine();
+            writeTimer.Elapsed += WriteTimer_Elapsed;
+            writeTimer.Start();
+        }
+
+        private void WriteTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            WriteTag("ns=2;s=Water.KKU.General.PC.WatchDog", (ushort)(count2--));
+            WriteTag("ns=2;s=Water.KKU.General.PLC.WatchDog", (ushort)(count++));
+            WriteTag("ns=2;s=Water.KKU.General.PLC.HeldErrorCodes", (ushort)(count++));
+            WriteTag("ns=2;s=Water.KKU.General.PLC.SuspendErrorCodes", (ushort)(count++));
+            WriteTag("ns=2;s=Water.KKU.General.PLC.State", (ushort)(count++));
+            writeTimer.Start(); 
+        }
+
+        private void PrintReferences(ReferenceDescription referenceDescription, string space)
+        {
+            ReferenceDescriptionCollection referenceDescriptions = session.FetchReferences(ObjectIds.ObjectsFolder);
+            Byte[] continuationPoint;
+
+            session.Browse(
+                null,
+                null,
+                ExpandedNodeId.ToNodeId(referenceDescription.NodeId, session.NamespaceUris),
+                0u,
+                BrowseDirection.Forward,
+                ReferenceTypeIds.HierarchicalReferences,
+                true,
+                (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method,
+                out continuationPoint,
+                out referenceDescriptions);
+
+            foreach(var rd in referenceDescriptions)
+            {
+                Console.WriteLine(space + " + {0}, {1}, {2}, {3}, {4}, {5}", rd.DisplayName, rd.BrowseName, rd.NodeClass, rd.NodeId, rd.ReferenceTypeId, rd.NodeId.IdType);
+                if (rd.DisplayName.Text.Contains("_Hint") || rd.NodeClass == NodeClass.Variable)
+                    continue;
+                //Thread.Sleep(500);
+                PrintReferences(rd, space + "   ");
+            }
+
         }
 
         private void Client_KeepAlive(Session sender, KeepAliveEventArgs e)
@@ -337,5 +359,31 @@ namespace NetCoreConsoleClient
             }
         }
 
+        static ushort count2 = 127;
+        static int count = 0;
+        private void WriteTag()
+        {
+            var wvq = new WriteValueCollection() { new WriteValue() { AttributeId = Opc.Ua.Attributes.Value, NodeId = new NodeId("ns=2;s=Water.KKU.General.PLC.WatchDog"), Value = new DataValue(new Variant((ushort)(count++))) } };
+
+            session.Write(null, wvq, out StatusCodeCollection statusCodes, out DiagnosticInfoCollection diag);
+            
+        }
+
+        private void WriteTag<T>(string id, T value)
+        {
+            var wvq = new WriteValueCollection() { new WriteValue() { AttributeId = Opc.Ua.Attributes.Value, NodeId = new NodeId(id), Value = new DataValue(new Variant((T)value)) } };
+
+            session.Write(null, wvq, out StatusCodeCollection statusCodes, out DiagnosticInfoCollection diag);
+
+            //Console.WriteLine($"    Write: {id}, StatusCode: {statusCodes[0]}");
+
+        }
+
+        private void ReadTag()
+        {
+            var rvq = new ReadValueIdCollection();
+        }
+
+        private System.Timers.Timer writeTimer = new System.Timers.Timer(2000) { AutoReset = false,  };
     }
 }

@@ -515,6 +515,9 @@
       <DependentUpon>EndpointViewDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Sessions\TypeHierarchyListCtrl.resx">
+      <DependentUpon>TypeHierarchyListCtrl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Sessions\TypeNavigatorCtrl.resx">
       <DependentUpon>TypeNavigatorCtrl.cs</DependentUpon>
       <SubType>Designer</SubType>
