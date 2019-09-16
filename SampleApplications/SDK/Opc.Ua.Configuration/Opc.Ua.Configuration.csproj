@@ -5,7 +5,7 @@
     <AssemblyName>Opc.Ua.Configuration</AssemblyName>
     <LangVersion>6</LangVersion>
     <PackageId>Opc.Ua.Configuration</PackageId>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
