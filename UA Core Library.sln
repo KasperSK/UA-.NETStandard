@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Opc.Ua.Core", "Stack\Opc.Ua.Core\Opc.Ua.Core.csproj", "{84FE2F0A-4192-4D2C-8097-9C396C2375E8}"
 EndProject
@@ -40,11 +40,9 @@ Global
 		{0B97D07F-629D-47DD-8975-B1F96D434130}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B97D07F-629D-47DD-8975-B1F96D434130}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B97D07F-629D-47DD-8975-B1F96D434130}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B97D07F-629D-47DD-8975-B1F96D434130}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B64C8C45-7323-4353-A01C-81803F368799}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B64C8C45-7323-4353-A01C-81803F368799}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B64C8C45-7323-4353-A01C-81803F368799}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B64C8C45-7323-4353-A01C-81803F368799}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,7 @@
     <LangVersion>6</LangVersion>
     <PackageId>Opc.Ua.Client</PackageId>
     <Description>OPC UA Client Class Library</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
