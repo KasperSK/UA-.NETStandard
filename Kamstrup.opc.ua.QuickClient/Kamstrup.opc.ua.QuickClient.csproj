@@ -83,6 +83,7 @@
     <Compile Include="ViewModels\Servers\TreeViewItem.cs" />
     <Compile Include="ViewModels\Servers\TreeViewItemLeafViewModel.cs" />
     <Compile Include="ViewModels\Servers\TreeViewItemViewModel.cs" />
+    <Compile Include="ViewModels\Servers\TreeViewRoot.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="ViewModels\StatusBarViewModel.cs" />
     <Compile Include="ViewModels\ToolBarViewModel.cs" />

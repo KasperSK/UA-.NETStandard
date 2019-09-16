@@ -38,7 +38,7 @@ namespace Kamstrup.opc.ua.client
         public KamstrupOpcClient(string endpointUrl, bool acceptAllCertificates, int stopTimeout)
         {
             this.endPointUrl = endpointUrl;
-            endpointDescription = CoreClientUtils.SelectEndpoint(this.endPointUrl, false);
+            //endpointDescription = CoreClientUtils.SelectEndpoint(this.endPointUrl, false);
             nodeNameHandle = new Dictionary<string, uint>();
             nodeNameMonitor = new Dictionary<string, opcItem>();
         }
@@ -63,6 +63,7 @@ namespace Kamstrup.opc.ua.client
 
             applicationConfiguration.CertificateValidator.CertificateValidation += CertificateValidation;
 
+            endpointDescription = CoreClientUtils.SelectEndpoint(this.endPointUrl, false);
             var endpointConfiguration = EndpointConfiguration.Create(applicationConfiguration);
             configuredEndpoint = new ConfiguredEndpoint(null, endpointDescription, endpointConfiguration);
 
@@ -141,7 +142,6 @@ namespace Kamstrup.opc.ua.client
             newSubscription.PublishingInterval = updateRate;
             newSubscription.PublishingEnabled = active;
 
-
             session.AddSubscription(newSubscription);
             newSubscription.Create();
 
@@ -163,16 +163,83 @@ namespace Kamstrup.opc.ua.client
         public ReferenceDescriptionCollection GetServerTagList()
         {
             ReferenceDescriptionCollection result = new ReferenceDescriptionCollection();
-
-            ReferenceDescriptionCollection referenceDescriptions = session.FetchReferences(ObjectIds.ObjectsFolder);
-
-            result.AddRange(referenceDescriptions);
-            foreach (var rd in referenceDescriptions)
+            try
             {
-                Recurse(rd, result);
+                ReferenceDescriptionCollection referenceDescriptions = session.FetchReferences(ObjectIds.ObjectsFolder);
+                ReferenceDescriptionCollection additionalReferenceDescriptions = new ReferenceDescriptionCollection();
+                result.AddRange(referenceDescriptions);
+                for (var i = 0; i < referenceDescriptions.Count; i++)
+                {
+                    try
+                    {
+                        var refDef = FetchReferences(ExpandedNodeId.ToNodeId(referenceDescriptions[i].NodeId, session.NamespaceUris));
+                        foreach (var r in refDef)
+                        {
+                            var item = referenceDescriptions.FirstOrDefault(x => x.NodeId == r.NodeId);
+                            if (item == null)
+                                referenceDescriptions.Add(r);
+                            additionalReferenceDescriptions.Add(r);
+                        }
+                    }catch(Exception ex)
+                    {
+                        var e = new Exception($"{i}: {referenceDescriptions[i].NodeId}", ex);
+                        e.Data.Add($"{i}", referenceDescriptions[i]);
+                        throw e;
+                    }
+                    //Recurse(rd, result);
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
             return result;
+        }
+
+        public ReferenceDescriptionCollection GetChildren(ReferenceDescription referenceDescription)
+        {
+            var refDef = FetchReferences(ExpandedNodeId.ToNodeId(referenceDescription.NodeId, session.NamespaceUris));
+
+            return refDef;
+        }
+
+        private ReferenceDescriptionCollection FetchReferences(NodeId nodeId)
+        {
+            byte[] continuationPoint;
+            ReferenceDescriptionCollection descriptions;
+
+            session.Browse(
+                null,
+                null,
+                nodeId,
+                0,
+                BrowseDirection.Forward,
+                null,
+                true,
+                0,
+                out continuationPoint,
+                out descriptions);
+
+            // process any continuation point.
+            while (continuationPoint != null)
+            {
+                byte[] revisedContinuationPoint;
+                ReferenceDescriptionCollection additionalDescriptions;
+
+                session.BrowseNext(
+                    null,
+                    false,
+                    continuationPoint,
+                    out revisedContinuationPoint,
+                    out additionalDescriptions);
+
+                continuationPoint = revisedContinuationPoint;
+
+                descriptions.AddRange(additionalDescriptions);
+            }
+
+            return descriptions; 
         }
 
         private void Recurse(ReferenceDescription referenceDescription, ReferenceDescriptionCollection result) //TODO Rethink this.

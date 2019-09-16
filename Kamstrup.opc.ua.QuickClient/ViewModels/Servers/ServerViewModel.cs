@@ -20,9 +20,19 @@ namespace Kamstrup.opc.ua.QuickClient.ViewModels.Servers
 
             var refDes = client.GetServerTagList();
 
-            var transformed = refDes.Select(x => new ReferenceNodeViewModel(this, x) { DisplayName = $"{x.NodeId.Identifier.ToString()}" });
-            Items.AddRange(transformed);
+            var transformed = refDes.Select(x => new ReferenceNodeViewModel(this, x) { DisplayName = $"{x.BrowseName}" });
+            var L = transformed.ToList();
+            Items.AddRange(L);
+
+            foreach (var r in L)
+            {
+                var rd = client.GetChildren(r.ReferenceDescription);
+                var t = rd.Select(x => new ReferenceNodeViewModel(r, x) { DisplayName = $"{x.BrowseName}" });
+                r.Items.AddRange(t);
+
+            }
         }
+
 
         public void Connect()
         {

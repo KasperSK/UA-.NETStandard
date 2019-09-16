@@ -236,7 +236,7 @@ namespace NetCoreConsoleClient
 
             Console.WriteLine("5 - Create a subscription with publishing interval of 1 second.");
             exitCode = ExitCode.ErrorCreateSubscription;
-            var subscription = new Subscription(session.DefaultSubscription) { PublishingInterval = 250 };
+            var subscription = new Subscription(session.DefaultSubscription) { PublishingInterval = 50 };
 
             Console.WriteLine("6 - Add a list of items (server current time and status) to the subscription.");
             exitCode = ExitCode.ErrorMonitoredItem;

@@ -9,13 +9,14 @@ namespace Kamstrup.opc.ua.QuickClient.ViewModels.Servers
 {
     class ReferenceNodeViewModel : TreeViewItemViewModel
     {
-        private ReferenceDescription referenceDescription;
+
         public ReferenceNodeViewModel(TreeViewItem parent, ReferenceDescription referenceDescription) : base(parent)
         {
-            this.referenceDescription = referenceDescription;
+            this.ReferenceDescription = referenceDescription;
             ReferenceDescriptionViewModel = new ReferenceDescriptionViewModel(referenceDescription);
         }
 
         public ReferenceDescriptionViewModel ReferenceDescriptionViewModel { get; set; }
+        public ReferenceDescription ReferenceDescription { get; set; }
     }
 }

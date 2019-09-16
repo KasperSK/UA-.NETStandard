@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Kamstrup.opc.ua.QuickClient.ViewModels
 {
-    public class MainWindowViewModel : Servers.TreeViewItemViewModel
+    public class MainWindowViewModel : Servers.TreeViewRoot
     {
 
         private KamstrupOpcClient kamstrupOpcClient;
 
-        public MainWindowViewModel() : base(null)
+        public MainWindowViewModel() 
         {         
-            Items.Add(new Servers.ServerViewModel(this, "opc.tcp://localhost:49320") { DisplayName = "LocalUAServer" });
-            Items.Add(new Servers.ServerViewModel(this, "opc.tcp://DK-KSK-HP800SFF.kamstrup.dk:49321") { DisplayName = "RemoteUAServer" });
-            Items.Add(new Servers.ServerViewModel(this, "opc.tcp://192.168.250.1") { DisplayName = "PLCUAServer" });
+            Root.Add(new Servers.ServerViewModel(null, "opc.tcp://localhost:49320") { DisplayName = "LocalUAServer" });
+            Root.Add(new Servers.ServerViewModel(null, "opc.tcp://DK-KSK-HP800SFF.kamstrup.dk:49321") { DisplayName = "RemoteUAServer" });
+            Root.Add(new Servers.ServerViewModel(null, "opc.tcp://172.20.17.69") { DisplayName = "PLCUAServer" });
         }
 
         public async void TestEndpoint(string endpointUri)
@@ -32,7 +32,7 @@ namespace Kamstrup.opc.ua.QuickClient.ViewModels
 
         public async void Connect(string endpointUri)
         {
-            foreach( var item in Items)
+            foreach( var item in Root)
             {
                 if(item is Servers.ServerViewModel)
                 {
@@ -41,7 +41,7 @@ namespace Kamstrup.opc.ua.QuickClient.ViewModels
             }
 
 
-            var server = Items[0] as Servers.ServerViewModel;
+            var server = Root[0] as Servers.ServerViewModel;
 
             server.SetupTags();
             //kamstrupOpcClient = new KamstrupOpcClient(endpointUri, true, 60000);

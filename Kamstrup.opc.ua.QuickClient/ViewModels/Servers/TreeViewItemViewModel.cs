@@ -34,6 +34,5 @@ namespace Kamstrup.opc.ua.QuickClient.ViewModels.Servers
                     _parent.IsExpanded = true;
             }
         }
-
     }
 }
