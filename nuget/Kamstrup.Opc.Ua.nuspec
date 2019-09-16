@@ -22,7 +22,6 @@
   <files>
     <file src="..\Stack\Opc.Ua.Core\bin\Release\netstandard2.0\Opc.Ua.Core.dll" target="lib\netstandard2.0" />
     <file src="..\SampleApplications\SDK\Opc.Ua.Client\bin\Release\netstandard2.0\Opc.Ua.Client.dll" target="lib\netstandard2.0" />
-    <file src="..\SampleApplications\SDK\Opc.Ua.Server\bin\Release\netstandard2.0\Opc.Ua.Server.dll" target="lib\netstandard2.0" />
     <file src="..\SampleApplications\SDK\Opc.Ua.Configuration\bin\Release\netstandard2.0\Opc.Ua.Configuration.dll" target="lib\netstandard2.0" />
   </files>
 </package>
