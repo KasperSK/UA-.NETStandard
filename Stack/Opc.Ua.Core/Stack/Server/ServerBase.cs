@@ -665,14 +665,14 @@ namespace Opc.Ua
                     tcpListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
                     continue;
                 }
-//#if !NO_HTTPS
-//                UaHttpsChannelListener httpsListener = listener as UaHttpsChannelListener;
-//                if (httpsListener != null)
-//                {
-//                    httpsListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
-//                    continue;
-//                }
-//#endif
+#if !NO_HTTPS
+                UaHttpsChannelListener httpsListener = listener as UaHttpsChannelListener;
+                if (httpsListener != null)
+                {
+                    httpsListener.CertificateUpdate(e.CertificateValidator, InstanceCertificate, null);
+                    continue;
+                }
+#endif
             }
         }
 
@@ -809,147 +809,147 @@ namespace Opc.Ua
             return endpoints;
         }
 
-//#if !NO_HTTPS
-//        /// <summary>
-//        /// Create a new service host for UA HTTPS.
-//        /// </summary>
-//        protected List<EndpointDescription> CreateHttpsServiceHost(
-//            IDictionary<string, Task> hosts,
-//            ApplicationConfiguration configuration,
-//            IList<string> baseAddresses,
-//            ApplicationDescription serverDescription,
-//            List<ServerSecurityPolicy> securityPolicies)
-//        {
-//            // generate a unique host name.
-//            string hostName = String.Empty;
+#if !NO_HTTPS
+        /// <summary>
+        /// Create a new service host for UA HTTPS.
+        /// </summary>
+        protected List<EndpointDescription> CreateHttpsServiceHost(
+            IDictionary<string, Task> hosts,
+            ApplicationConfiguration configuration,
+            IList<string> baseAddresses,
+            ApplicationDescription serverDescription,
+            List<ServerSecurityPolicy> securityPolicies)
+        {
+            // generate a unique host name.
+            string hostName = String.Empty;
 
-//            if (hosts.ContainsKey(hostName))
-//            {
-//                hostName = "/Https";
-//            }
+            if (hosts.ContainsKey(hostName))
+            {
+                hostName = "/Https";
+            }
 
-//            if (hosts.ContainsKey(hostName))
-//            {
-//                hostName += Utils.Format("/{0}", hosts.Count);
-//            }
+            if (hosts.ContainsKey(hostName))
+            {
+                hostName += Utils.Format("/{0}", hosts.Count);
+            }
 
-//            // build list of uris.
-//            List<Uri> uris = new List<Uri>();
-//            EndpointDescriptionCollection endpoints = new EndpointDescriptionCollection();
+            // build list of uris.
+            List<Uri> uris = new List<Uri>();
+            EndpointDescriptionCollection endpoints = new EndpointDescriptionCollection();
 
-//            // create the endpoint configuration to use.
-//            EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(configuration);
-//            string computerName = Utils.GetHostName();
+            // create the endpoint configuration to use.
+            EndpointConfiguration endpointConfiguration = EndpointConfiguration.Create(configuration);
+            string computerName = Utils.GetHostName();
 
-//            for (int ii = 0; ii < baseAddresses.Count; ii++)
-//            {
-//                if (!baseAddresses[ii].StartsWith(Utils.UriSchemeHttps, StringComparison.Ordinal))
-//                {
-//                    continue;
-//                }
+            for (int ii = 0; ii < baseAddresses.Count; ii++)
+            {
+                if (!baseAddresses[ii].StartsWith(Utils.UriSchemeHttps, StringComparison.Ordinal))
+                {
+                    continue;
+                }
 
-//                UriBuilder uri = new UriBuilder(baseAddresses[ii]);
+                UriBuilder uri = new UriBuilder(baseAddresses[ii]);
 
-//                if (uri.Path[uri.Path.Length - 1] != '/')
-//                {
-//                    uri.Path += "/";
-//                }
+                if (uri.Path[uri.Path.Length - 1] != '/')
+                {
+                    uri.Path += "/";
+                }
 
-//                if (String.Compare(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase) == 0)
-//                {
-//                    uri.Host = computerName;
-//                }
+                if (String.Compare(uri.Host, "localhost", StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    uri.Host = computerName;
+                }
 
-//                uris.Add(uri.Uri);
+                uris.Add(uri.Uri);
 
-//                if (uri.Scheme == Utils.UriSchemeHttps)
-//                {
-//                    // Can only support one policy with HTTPS so pick the 
-//                    // first secure policy with sign and encrypt in the list 
-//                    ServerSecurityPolicy bestPolicy = null;
-//                    foreach (ServerSecurityPolicy policy in securityPolicies)
-//                    {
-//                        if (policy.SecurityMode != MessageSecurityMode.SignAndEncrypt)
-//                        {
-//                            continue;
-//                        }
+                if (uri.Scheme == Utils.UriSchemeHttps)
+                {
+                    // Can only support one policy with HTTPS so pick the 
+                    // first secure policy with sign and encrypt in the list 
+                    ServerSecurityPolicy bestPolicy = null;
+                    foreach (ServerSecurityPolicy policy in securityPolicies)
+                    {
+                        if (policy.SecurityMode != MessageSecurityMode.SignAndEncrypt)
+                        {
+                            continue;
+                        }
 
-//                        bestPolicy = policy;
-//                        break;
-//                    }
+                        bestPolicy = policy;
+                        break;
+                    }
 
-//                    if (bestPolicy == null)
-//                    {
-//                        throw new ServiceResultException("HTTPS transport requires policy with sign and encrypt.");
-//                    }
+                    if (bestPolicy == null)
+                    {
+                        throw new ServiceResultException("HTTPS transport requires policy with sign and encrypt.");
+                    }
 
-//                    EndpointDescription description = new EndpointDescription();
+                    EndpointDescription description = new EndpointDescription();
 
-//                    description.EndpointUrl = uri.ToString();
-//                    description.Server = serverDescription;
+                    description.EndpointUrl = uri.ToString();
+                    description.Server = serverDescription;
 
-//                    if (InstanceCertificate != null)
-//                    {
-//                        description.ServerCertificate = InstanceCertificate.RawData;
+                    if (InstanceCertificate != null)
+                    {
+                        description.ServerCertificate = InstanceCertificate.RawData;
 
-//                        // check if complete chain should be sent.
-//                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count > 0)
-//                        {
-//                            List<byte> serverCertificateChain = new List<byte>();
+                        // check if complete chain should be sent.
+                        if (configuration.SecurityConfiguration.SendCertificateChain && InstanceCertificateChain != null && InstanceCertificateChain.Count > 0)
+                        {
+                            List<byte> serverCertificateChain = new List<byte>();
 
-//                            for (int i = 0; i < InstanceCertificateChain.Count; i++)
-//                            {
-//                                serverCertificateChain.AddRange(InstanceCertificateChain[i].RawData);
-//                            }
+                            for (int i = 0; i < InstanceCertificateChain.Count; i++)
+                            {
+                                serverCertificateChain.AddRange(InstanceCertificateChain[i].RawData);
+                            }
 
-//                            description.ServerCertificate = serverCertificateChain.ToArray();
-//                        }
-//                    }
+                            description.ServerCertificate = serverCertificateChain.ToArray();
+                        }
+                    }
 
-//                    description.SecurityMode = bestPolicy.SecurityMode;
-//                    description.SecurityPolicyUri = bestPolicy.SecurityPolicyUri;
-//                    description.SecurityLevel = ServerSecurityPolicy.CalculateSecurityLevel(bestPolicy.SecurityMode, bestPolicy.SecurityPolicyUri);
-//                    description.UserIdentityTokens = GetUserTokenPolicies(configuration, description);
-//                    description.TransportProfileUri = Profiles.HttpsBinaryTransport;
+                    description.SecurityMode = bestPolicy.SecurityMode;
+                    description.SecurityPolicyUri = bestPolicy.SecurityPolicyUri;
+                    description.SecurityLevel = ServerSecurityPolicy.CalculateSecurityLevel(bestPolicy.SecurityMode, bestPolicy.SecurityPolicyUri);
+                    description.UserIdentityTokens = GetUserTokenPolicies(configuration, description);
+                    description.TransportProfileUri = Profiles.HttpsBinaryTransport;
 
-//                    endpoints.Add(description);
-//                }
+                    endpoints.Add(description);
+                }
 
-//                // create the stack listener.
-//                try
-//                {
-//                    TransportListenerSettings settings = new TransportListenerSettings();
+                // create the stack listener.
+                try
+                {
+                    TransportListenerSettings settings = new TransportListenerSettings();
 
-//                    settings.Descriptions = endpoints;
-//                    settings.Configuration = endpointConfiguration;
-//                    settings.ServerCertificate = this.InstanceCertificate;
-//                    settings.CertificateValidator = configuration.CertificateValidator.GetChannelValidator();
-//                    settings.NamespaceUris = this.MessageContext.NamespaceUris;
-//                    settings.Factory = this.MessageContext.Factory;
+                    settings.Descriptions = endpoints;
+                    settings.Configuration = endpointConfiguration;
+                    settings.ServerCertificate = this.InstanceCertificate;
+                    settings.CertificateValidator = configuration.CertificateValidator.GetChannelValidator();
+                    settings.NamespaceUris = this.MessageContext.NamespaceUris;
+                    settings.Factory = this.MessageContext.Factory;
 
-//                    ITransportListener listener = new Opc.Ua.Bindings.UaHttpsChannelListener();
+                    ITransportListener listener = new Opc.Ua.Bindings.UaHttpsChannelListener();
 
-//                    listener.Open(
-//                       uri.Uri,
-//                       settings,
-//                       GetEndpointInstance(this));
+                    listener.Open(
+                       uri.Uri,
+                       settings,
+                       GetEndpointInstance(this));
 
-//                    TransportListeners.Add(listener);
-//                }
-//                catch (Exception e)
-//                {
-//                    string message = "Could not load HTTPS Stack Listener.";
-//                    if (e.InnerException != null)
-//                    {
-//                        message += (" " + e.InnerException.Message);
-//                    }
-//                    Utils.Trace(e, message);
-//                }
-//            }
+                    TransportListeners.Add(listener);
+                }
+                catch (Exception e)
+                {
+                    string message = "Could not load HTTPS Stack Listener.";
+                    if (e.InnerException != null)
+                    {
+                        message += (" " + e.InnerException.Message);
+                    }
+                    Utils.Trace(e, message);
+                }
+            }
 
-//            return endpoints;
-//        }
-//#endif
+            return endpoints;
+        }
+#endif
 
         /// <summary>
         /// Returns the UserTokenPolicies supported by the server.

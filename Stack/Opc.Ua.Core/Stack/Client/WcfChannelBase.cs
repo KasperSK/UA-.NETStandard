@@ -760,7 +760,7 @@ namespace Opc.Ua
             else if (useHttps)
             {
 #if !NO_HTTPS
-                //channel = new HttpsTransportChannel();
+                channel = new HttpsTransportChannel();
 #endif
             }
 
