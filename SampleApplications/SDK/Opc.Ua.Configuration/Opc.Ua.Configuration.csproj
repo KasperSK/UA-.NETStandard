@@ -1,15 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net46;netstandard1.3;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net46;netstandard2.0</TargetFrameworks>
     <AssemblyName>Opc.Ua.Configuration</AssemblyName>
     <LangVersion>6</LangVersion>
     <PackageId>Opc.Ua.Configuration</PackageId>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
-    <DocumentationFile>C:\Users\ksk\Documents\GitHub\UA-.NETStandard\SampleApplications\SDK\Opc.Ua.Configuration\Opc.Ua.Configuration.xml</DocumentationFile>
+    <RootNamespace>Opc.Ua.Configuration</RootNamespace>
+    <Description>OPC UA Configuration Class Library</Description>
   </PropertyGroup>
 
   <ItemGroup>

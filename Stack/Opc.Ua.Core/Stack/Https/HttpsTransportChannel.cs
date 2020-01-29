@@ -74,6 +74,12 @@ namespace Opc.Ua.Bindings
                 var handler = new HttpClientHandler();
                 handler.ClientCertificateOptions = ClientCertificateOption.Manual;
 
+                // send client certificate for servers that require TLS client authentication
+                if (m_settings.ClientCertificate != null)
+                {
+                    handler.ClientCertificates.Add(m_settings.ClientCertificate);
+                }
+
                 // OSX platform cannot auto validate certs and throws
                 // on PostAsync, do not set validation handler
                 if (!RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
@@ -108,7 +114,7 @@ namespace Opc.Ua.Bindings
             catch (Exception ex)
             {
                 Utils.Trace("Exception creating HTTPS Client: " + ex.Message);
-                throw ex;
+                throw;
             }
         }
 
@@ -183,7 +189,7 @@ namespace Opc.Ua.Bindings
             AsyncResult result2 = result as AsyncResult;
             if (result2 == null)
             {
-                throw new ArgumentException("Invalid result object passed.", "result");
+                throw new ArgumentException("Invalid result object passed.", nameof(result));
             }
 
             try
