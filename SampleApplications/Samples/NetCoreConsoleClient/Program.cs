@@ -93,9 +93,9 @@ namespace NetCoreConsoleClient
             if (extraArgs.Count == 0)
             {
                 // use OPC UA .Net Sample server 
-                //endpointURL = "opc.tcp://DK-KSK-HP850.kamstrup.dk:49321";
+                endpointURL = "opc.tcp://DK-KSK-HP850.kamstrup.dk:49321";
                 //endpointURL = "opc.tcp://us-atl-sal1kep.kamstrup.dk:49320";
-                endpointURL = "opc.tcp://172.20.17.69";
+                //endpointURL = "opc.tcp://172.20.17.69";
                 //endpointURL = "opc.tcp://DK-KSK-HP800SFF.kamstrup.dk:49321";
 
             }
@@ -245,10 +245,10 @@ namespace NetCoreConsoleClient
                 //{
                 //    DisplayName = "ServerStatusCurrentTime", StartNodeId = "i="+Variables.Server_ServerStatus_CurrentTime.ToString()
                 //},
-                //new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATER.KKU.GENERAL.PLC.WATCHDOG", StartNodeId = new NodeId("Water.KKU.General.PLC.WatchDog", NamespaceIndex) },
+                new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATER.KKU.GENERAL.PLC.WATCHDOG", StartNodeId = new NodeId("Water.KKU.General.PLC.WatchDog", NamespaceIndex) },
                 //new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATER.KKU.GENERAL.PC.WATCHDOG", StartNodeId = new NodeId("Water.KKU.General.PC.WatchDog", NamespaceIndex),  MonitoringMode = MonitoringMode.Sampling },
 
-                new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATCHDOG", StartNodeId = new NodeId("WATCHDOG", 4) },
+                //new MonitoredItem(subscription.DefaultItem) { DisplayName = "WATCHDOG", StartNodeId = new NodeId("WATCHDOG", 4) },
             };
             list.ForEach(i => i.Notification += OnNotification);
             subscription.AddItems(list);
@@ -337,7 +337,7 @@ namespace NetCoreConsoleClient
 
         private static void OnNotification(MonitoredItem item, MonitoredItemNotificationEventArgs e)
         {
-            foreach (var value in item.DequeueValues())
+            foreach (var value in item.DequeueValues ())
             {
                 Console.WriteLine("{0}: {1}, {2}, {3}", item.DisplayName, value.Value, value.SourceTimestamp, value.StatusCode);
             }
