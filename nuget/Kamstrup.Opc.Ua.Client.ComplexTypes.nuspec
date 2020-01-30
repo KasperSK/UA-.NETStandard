@@ -13,7 +13,7 @@
     <tags>OPCFoundation OPC-UA netstandard ios linux dotnet net netcore uwp</tags>
     <dependencies>
       <group targetFramework="net46" >
-        <dependency id="Kamstrup.Opc.Ua" version="$version$"/>
+        <dependency id="Kamstrup.Opc.Ua" version="1.04.359"/>
       </group>
       <group targetFramework="netcoreapp2.0" >
         <dependency id="Kamstrup.Opc.Ua" version="$version$"/>
